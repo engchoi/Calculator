@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private class ButtonEventListener implements View.OnClickListener {
         public void onClick(View view) {
             String equation = equationEditText.getText().toString();
+            //resultTextView.setText(arithmetic.infixToPostfix(equation));
             resultTextView.setText(arithmetic.calculate(equation));
         }
     }

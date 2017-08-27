@@ -1,5 +1,6 @@
 package com.example.jchoi.calculator;
 
+import java.util.Scanner;
 import java.util.Stack;
 
 class Arithmetic {
@@ -15,7 +16,16 @@ class Arithmetic {
         return -1;
     }
 
-    private String infixToPostfix(String exp) {
+    private boolean isNumber(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public String infixToPostfix(String exp) {
         Stack<Character> stack = new Stack<>();
         String result = "";
 
@@ -24,9 +34,11 @@ class Arithmetic {
 
             if (Character.isLetterOrDigit(c))
                 result += c;
-            else if (c == '(')
+            else if (c == '(') {
+                result += ' ';
                 stack.push(c);
-            else if (c == ')') {
+            } else if (c == ')') {
+                result += ' ';
                 while (!stack.isEmpty() && stack.peek() != '(')
                     result += stack.pop();
 
@@ -34,24 +46,62 @@ class Arithmetic {
                     return "Invalid Expression";
                 else
                     stack.pop();
-            }
-            else {
+            } else {
+                result += ' ';
                 while (!stack.isEmpty() && prioritize(c) <= prioritize(stack.peek()))
                     result += stack.pop();
                 stack.push(c);
             }
         }
 
-        while (!stack.isEmpty())
+        while (!stack.isEmpty()) {
+            result += ' ';
             result += stack.pop();
+        }
 
         return result;
     }
 
     String calculate(String exp) {
         Stack<Integer> stack = new Stack<>();
-        String prefix = infixToPostfix(exp);
+        String postfix = infixToPostfix(exp);
+        String buf;
 
+        Scanner scanner = new Scanner(postfix);
+
+        while (scanner.hasNext()) {
+            buf = scanner.next();
+
+            if (isNumber(buf))
+                stack.push(Integer.parseInt(buf));
+            else {
+                int result = 0;
+                int num1 = stack.pop();
+                int num2 = stack.pop();
+
+                switch (buf.charAt(0)) {
+                    case '+':
+                        result = num2 + num1;
+                        break;
+                    case '-':
+                        result = num2 - num1;
+                        break;
+                    case '*':
+                        result = num2 * num1;
+                        break;
+                    case '/':
+                        result = num2 / num1;
+                        break;
+                    default:
+                        System.out.println("Error");
+                }
+                stack.push(result);
+            }
+        }
+        return stack.pop().toString();
+    }
+}
+/*
         for (int i = 0; i < prefix.length(); ++i) {
             char c = prefix.charAt(i);
 
@@ -84,3 +134,5 @@ class Arithmetic {
         return stack.pop().toString();
     }
 }
+
+*/
